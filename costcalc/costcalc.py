@@ -7,6 +7,21 @@ ROOT_PATH = Path(__file__).resolve().parents[1]
 RECIPES_PATH = ROOT_PATH / "data" / "recipes.csv"
 PRICES_PATH = ROOT_PATH / "data" / "vendor_prices.csv"
 
+def normalize_price(purchase_unit: str, cost: float):
+    conversions = {
+        "50lb_case": 50,
+        "25lb_case": 25,
+        "lb": 1,
+        "gallon": 1,
+        "#10_can": 1,
+    }
+
+    if purchase_unit not in conversions:
+        return cost
+
+    divisor = conversions[purchase_unit]
+
+    return cost / divisor
 
 def load_vendor_prices():
     prices = {}
@@ -15,9 +30,16 @@ def load_vendor_prices():
         reader = csv.DictReader(csvfile)
 
         for row in reader:
+            raw_cost = float(row["cost"])
+
+            normalized_cost = normalize_price(
+                row["purchase_unit"],
+                raw_cost
+            )
+
             prices[row["ingredient"]] = {
                 "purchase_unit": row["purchase_unit"],
-                "cost": float(row["cost"]),
+                "cost": normalized_cost,
             }
 
     return prices
@@ -60,12 +82,14 @@ def cost_recipe(recipe_name: str):
             continue
 
         ingredient_cost = prices[ingredient]["cost"] * quantity
+        unit_cost = prices[ingredient]["cost"]
         total_cost += ingredient_cost
 
         print(
             f"{ingredient:<20}"
             f"{quantity:>8.2f} {unit:<8}"
-            f"${ingredient_cost:>8.2f}"
+            f"@ ${unit_cost:>6.2f} "
+            f"= ${ingredient_cost:>7.2f}"
         )
 
     cost_per_portion = total_cost / base_portions
