@@ -74,6 +74,34 @@ def estimate_portions(total_amount: float, portion_size: float, unit: str):
     print(f"Portion Size: {portion_size:.2f} {unit}")
     print(f"Estimated Portions: {portions:.2f}")
 
+def convert_units(amount: float, from_unit: str, to_unit: str):
+    conversions = {
+        ("lb", "oz"): 16,
+        ("oz", "lb"): 1 / 16,
+        ("gal", "qt"): 4,
+        ("qt", "gal"): 1 / 4,
+        ("qt", "cup"): 4,
+        ("cup", "qt"): 1 / 4,
+        ("cup", "floz"): 8,
+        ("floz", "cup"): 1 / 8,
+        ("tbsp", "tsp"): 3,
+        ("tsp", "tbsp"): 1 / 3,
+    }
+
+    key = (from_unit, to_unit)
+
+    if key not in conversions:
+        print(f"Conversion not available: {from_unit} to {to_unit}")
+        return
+
+    converted = amount * conversions[key]
+
+    print("\n===================================")
+    print(" TenzoToolkit Unit Converter")
+    print("===================================\n")
+
+    print(f"{amount:.2f} {from_unit} = {converted:.2f} {to_unit}")
+
 def main():
     parser = argparse.ArgumentParser(
         description="TenzoToolkit Kitchen Prep Calculator"
@@ -136,6 +164,27 @@ def main():
         help="Unit of measurement"
     )
 
+    convert_parser = subparsers.add_parser(
+        "convert",
+        help="Convert between common kitchen units"
+    )
+
+    convert_parser.add_argument(
+        "amount",
+        type=float,
+        help="Amount to convert"
+    )
+
+    convert_parser.add_argument(
+        "from_unit",
+        help="Starting unit"
+    )
+
+    convert_parser.add_argument(
+        "to_unit",
+        help="Target unit"
+    )
+
     args = parser.parse_args()
 
     if args.command == "scale":
@@ -153,6 +202,12 @@ def main():
             args.total_amount,
             args.portion_size,
             args.unit
+        )
+    elif args.command == "convert":
+        convert_units(
+            args.amount,
+            args.from_unit,
+            args.to_unit
         )
     else:
         parser.print_help()
