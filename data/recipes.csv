@@ -1,0 +1,10 @@
+recipe,base_portions,ingredient,quantity,unit
+mashed_potatoes,50,potatoes,15,lb
+mashed_potatoes,50,milk,1,gal
+mashed_potatoes,50,butter,2,lb
+mashed_potatoes,50,salt,3,tbsp
+chili,50,ground_beef,10,lb
+chili,50,beans,8,lb
+chili,50,tomatoes,2,#10_can
+chili,50,onions,3,lb
+chili,50,chili_powder,0.5,lb
