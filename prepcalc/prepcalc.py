@@ -63,6 +63,17 @@ def calculate_yield(raw_weight: float, yield_percent: float):
     print(f"Usable Yield:    {usable_yield:.2f} lb")
     print(f"Trim/Waste Loss: {waste_loss:.2f} lb")
 
+def estimate_portions(total_amount: float, portion_size: float, unit: str):
+    portions = total_amount / portion_size
+
+    print("\n===================================")
+    print(" TenzoToolkit Portion Estimator")
+    print("===================================\n")
+
+    print(f"Total Amount: {total_amount:.2f} {unit}")
+    print(f"Portion Size: {portion_size:.2f} {unit}")
+    print(f"Estimated Portions: {portions:.2f}")
+
 def main():
     parser = argparse.ArgumentParser(
         description="TenzoToolkit Kitchen Prep Calculator"
@@ -103,6 +114,28 @@ def main():
         help="Yield percentage"
     )
 
+    portions_parser = subparsers.add_parser(
+        "portions",
+        help="Estimate number of portions from total amount"
+    )
+
+    portions_parser.add_argument(
+        "total_amount",
+        type=float,
+        help="Total prepared amount"
+    )
+
+    portions_parser.add_argument(
+        "portion_size",
+        type=float,
+        help="Single portion size"
+    )
+
+    portions_parser.add_argument(
+        "unit",
+        help="Unit of measurement"
+    )
+
     args = parser.parse_args()
 
     if args.command == "scale":
@@ -114,6 +147,12 @@ def main():
         calculate_yield(
             args.raw_weight,
             args.yield_percent
+        )
+    elif args.command == "portions":
+        estimate_portions(
+            args.total_amount,
+            args.portion_size,
+            args.unit
         )
     else:
         parser.print_help()
