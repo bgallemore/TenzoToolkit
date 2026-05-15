@@ -49,6 +49,19 @@ def scale_recipe(recipe_name: str, target_portions: float):
             f"{row['unit']}"
         )
 
+def calculate_yield(raw_weight: float, yield_percent: float):
+    usable_yield = raw_weight * (yield_percent / 100)
+
+    waste_loss = raw_weight - usable_yield
+
+    print("\n===================================")
+    print(" TenzoToolkit Yield Calculator")
+    print("===================================\n")
+
+    print(f"Raw Weight:      {raw_weight:.2f} lb")
+    print(f"Yield %:         {yield_percent:.2f}%")
+    print(f"Usable Yield:    {usable_yield:.2f} lb")
+    print(f"Trim/Waste Loss: {waste_loss:.2f} lb")
 
 def main():
     parser = argparse.ArgumentParser(
@@ -73,12 +86,34 @@ def main():
         help="Target portions"
     )
 
+    yield_parser = subparsers.add_parser(
+        "yield",
+        help="Calculate edible yield"
+    )
+
+    yield_parser.add_argument(
+        "raw_weight",
+        type=float,
+        help="Raw starting weight"
+    )
+
+    yield_parser.add_argument(
+        "yield_percent",
+        type=float,
+        help="Yield percentage"
+    )
+
     args = parser.parse_args()
 
     if args.command == "scale":
         scale_recipe(
             args.recipe,
             args.portions
+        )
+    elif args.command == "yield":
+        calculate_yield(
+            args.raw_weight,
+            args.yield_percent
         )
     else:
         parser.print_help()
